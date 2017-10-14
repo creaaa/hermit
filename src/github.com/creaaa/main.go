@@ -145,12 +145,58 @@ func read(id int) {
 	}
 }
 
+func update(newValue string, id int) {
+	// 更新
+	res, err := db.Exec(
+		`UPDATE memo SET body=? WHERE id=?`,
+		newValue,
+		id,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// 更新されたレコード数
+	affect, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("affected by update: %d\n", affect)
+}
+
+func delete(id int) {
+	// 削除
+	res, err := db.Exec(
+		`DELETE FROM memo WHERE ID=?`,
+		id,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// 削除されたレコード数
+	affect, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("affected by delete: %d\n", affect)
+}
+
 func main() {
 
 	// setup()
 	// create()
 	// readAll()
-	read(5)
+	// read(5)
+	// update("月曜おはす〜", 3)
+
+	delete(4)
+	readAll()
+
+	create()
+	readAll()
 
 	//db.Close()
 }
