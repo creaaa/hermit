@@ -47,15 +47,36 @@ func setup() {
 }
 
 func create() {
-	var q = ""
 
-	q = "INSERT INTO memo "
-	q += " (body)"
-	q += " VALUES"
-	q += " ('body1')"
-	q += ",('body2')"
-	q += ",('body3')"
-	db_exec(db, q)
+	// まごころこめるとこう
+
+	//var q = ""
+	//
+	//q = "INSERT INTO memo "
+	//q += " (body)"
+	//q += " VALUES"
+	//q += " ('body1')"
+	//q += ",('body2')"
+	//q += ",('body3')"
+	//db_exec(db, q)
+
+	// ライブラリの恩恵に授かるとこう
+	res, err := db.Exec(
+		`INSERT INTO memo (body) VALUES (?)`,
+		"body4",
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// 挿入処理の結果からIDを取得
+	id, err := res.LastInsertId()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(id)
+
 }
 
 func db_exec(db *sql.DB, q string) {
