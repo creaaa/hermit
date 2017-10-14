@@ -58,7 +58,7 @@ func setup() {
 	db_exec(db, q)
 }
 
-func create() {
+func create(body string) {
 
 	// まごころこめるとこう
 
@@ -76,7 +76,7 @@ func create() {
 	/*res*/
 	_, err := db.Exec(
 		`INSERT INTO memo (body) VALUES (?)`,
-		"body4",
+		body,
 	)
 	if err != nil {
 		panic(err)
@@ -192,11 +192,14 @@ func main() {
 	// read(5)
 	// update("月曜おはす〜", 3)
 
-	delete(4)
-	readAll()
+	//delete(4)
+	//readAll()
+	//
+	//create()
+	//readAll()
 
-	create()
-	readAll()
+	//create("マリリ")
+	//readAll()
 
 	//db.Close()
 }
