@@ -17,17 +17,29 @@ import (
 	"fmt"
 	"os"
 
+	"log"
+
+	"time"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
 
 func init() {
-	fmt.Println("はいうんこ")
+	fmt.Println("init!!")
 	var err error
 
 	db, err = sql.Open("sqlite3", "./data.db")
 
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func db_exec(db *sql.DB, q string) {
+	var _, err = db.Exec(q)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -61,7 +73,8 @@ func create() {
 	//db_exec(db, q)
 
 	// ライブラリの恩恵に授かるとこう
-	res, err := db.Exec(
+	/*res*/
+	_, err := db.Exec(
 		`INSERT INTO memo (body) VALUES (?)`,
 		"body4",
 	)
@@ -70,27 +83,74 @@ func create() {
 	}
 
 	// 挿入処理の結果からIDを取得
-	id, err := res.LastInsertId()
+	//id, err := res.LastInsertId()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println(id)
+}
+
+func readAll() {
+	// 複数レコード取得
+	rows, err := db.Query(
+		`SELECT * FROM memo`,
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(id)
+	// 処理が終わったらカーソルを閉じる
+	defer rows.Close()
+	for rows.Next() {
+		var id int
+		var body string
+		var created time.Time
 
+		// カーソルから値を取得
+		// ...なんかこう、C言語チックな「副作用前提の」コードバリバリ使うんやな。
+		// これあんま好きじゃねぇな...
+		// たった1節で、エラー処理とエラーなし時の処理を同時に書けるのがメリットなんだろう。
+		// これをイヤと思うのはSwift脳だからだろうか...
+
+		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
+		if err := rows.Scan(&id, &body, &created); err != nil {
+			log.Fatal("rows.Scan()", err)
+			return
+		}
+		fmt.Printf("id: %d, title: %s, created: %v\n", id, body, created)
+	}
 }
 
-func db_exec(db *sql.DB, q string) {
-	var _, err = db.Exec(q)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+func read(id int) {
+	// 1件取得
+	row := db.QueryRow(
+		`SELECT * FROM memo WHERE ID=?`,
+		id,
+	)
+
+	// var id int
+	var body string
+	var created time.Time
+
+	err := row.Scan(&id, &body, &created)
+
+	// エラー内容による分岐
+	switch {
+	case err == sql.ErrNoRows:
+		fmt.Println("Not found")
+	case err != nil:
+		panic(err)
+	default:
+		fmt.Printf("id: %d, title: %s, created: %v\n", id, body, created)
 	}
 }
 
 func main() {
 
 	// setup()
-	create()
+	// create()
+	// readAll()
+	read(5)
 
 	//db.Close()
 }
