@@ -8,6 +8,9 @@ db, err = sql.Open("sqlite3", "./unko.db")
 実際は、テーブル定義を db.Exec(q) しないと作られない！
 これ気付かず、単独で Open() だけしてると、一生ファイル作られないからマジ気をつけろ！！
 
+これ、大いに役立った
+http://kuroeveryday.blogspot.ca/2017/08/sqlite3-with-golang.html
+
 */
 
 package main
@@ -36,6 +39,10 @@ func init() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	// current directory
+	dir, err := os.Getwd()
+	fmt.Println(dir)
 }
 
 func db_exec(db *sql.DB, q string) {
