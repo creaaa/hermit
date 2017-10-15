@@ -80,6 +80,8 @@ func setup() {
 	db_exec(db, q)
 }
 
+// これ、スライス(参照型)渡してるから元来破壊的かと思ったが、
+// なぜか ちゃんと結果を ([]string) 返さないとだめだった。
 func argParse(args []string) []string {
 	for idx, arg := range os.Args {
 		if idx == 0 || idx == 1 {
@@ -248,24 +250,53 @@ func update() {
 }
 
 // org -d
-//func delete() {
-//
-//	res, err := db.Exec(
-//		`DELETE FROM memo WHERE ID=?`,
-//		id,
-//	)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// 削除されたレコード数
-//	affect, err := res.RowsAffected()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	fmt.Printf("affected by delete: %d\n", affect)
-//}
+func delete() {
+
+	args := argParse([]string{})
+
+	//res, err := db.Exec(
+	//	`DELETE FROM urls WHERE ID=?`,
+	//	args[0], // 1個しか消せないようにした
+	//)
+	var (
+		res sql.Result
+		err error
+	)
+
+	if strings.HasPrefix(args[0], "http") || strings.HasPrefix(args[0], "https") {
+		fmt.Println("this is url!!")
+		res, err = db.Exec(
+			`DELETE FROM urls WHERE url=?`,
+			args[0], // 1個しか消せないようにした
+		)
+	} else if _, err := strconv.Atoi(args[0]); err == nil {
+		// intがまざってたら、URLに変換する処理を書く
+		fmt.Println("int!!!")
+		res, err = db.Exec(
+			`DELETE FROM urls WHERE ID=?`,
+			args[0], // 1個しか消せないようにした
+		)
+	} else {
+		fmt.Println("エイリアスの可能性!")
+		// エイリアスならURLに変換する処理を書く
+		res, err = db.Exec(
+			`DELETE FROM urls WHERE alias=?`,
+			args[0], // 1個しか消せないようにした
+		)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	// 削除されたレコード数
+	affect, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("affected by delete: %d\n", affect)
+}
 
 // org -da
 func deleteAll() {
@@ -404,7 +435,7 @@ func readURL(key interface{}) string {
 
 func parse() {
 
-	if len(os.Args) < 2 {
+	if !isEqualOrGreaterThanMinArgs(2) {
 		fmt.Println("Invalid argument. exit...")
 		os.Exit(1)
 	}
@@ -429,9 +460,9 @@ func parse() {
 	case "delete", "-d", "--delete":
 		fmt.Println("delete!")
 		if isEqualOrGreaterThanMinArgs(3) {
-			//delete()
+			delete()
 		} else {
-			panic("invalid argument: you need to add at least URL & alias")
+			panic("invalid argument: you need to add at least URL or alias or ID")
 		}
 	case "list", "-l", "--list":
 		fmt.Println("openURL!")
