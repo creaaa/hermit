@@ -31,6 +31,8 @@ import (
 
 	"bufio"
 
+	"net/http"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -129,36 +131,7 @@ func openURL() {
 	}
 
 	urls = argParse(urls)
-
-	//for idx, arg := range os.Args {
-	//	if idx == 0 || idx == 1 {
-	//		continue
-	//	}
-	//
-	//	if strings.HasPrefix(arg, "http") || strings.HasPrefix(arg, "https") {
-	//		fmt.Println("this is url!!")
-	//		urls = append(urls, arg)
-	//	} else if i, err := strconv.Atoi(arg); err == nil {
-	//		// intがまざってたら、URLに変換する処理を書く
-	//		fmt.Println("int!!!")
-	//		// DBから、IDをキーにURLを取得
-	//		if url := readURL(i); url != "" {
-	//			urls = append(urls, url)
-	//		}
-	//	} else {
-	//		fmt.Println("エイリアスの可能性!")
-	//		// エイリアスならURLに変換する処理を書く
-	//		if url := readURL(arg); url != "" {
-	//			urls = append(urls, url)
-	//		}
-	//	}
-	//}
-
 	fmt.Println("ks", urls)
-
-	// exec.Command("open", "-a", "Google Chrome", "-n",
-	//	"--args", "--incognito", "http://www.yahoo.co.jp", "https://www.google.ca/").Run()
-
 	exec.Command("open", urls...).Run()
 }
 
@@ -245,11 +218,84 @@ func list() {
 
 // org -f
 func fetch() {
+	urls := getAllURLs()
+	// 404を返したレコードに対しフラグをオン
+	count := isResourceExist(urls)
+
+	// 更新されたレコード数
+	//affect, err := res.RowsAffected()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	fmt.Printf("affected by update: %d\n", count)
+}
+
+// 全レコードのURLを抽出して返す
+func getAllURLs() []string {
+	var urls []string
+	// 複数レコード取得
+	rows, err := db.Query(
+		`SELECT url FROM urls`,
+	)
+	if err != nil {
+		panic(err)
+	}
+	// 処理が終わったらカーソルを閉じる
+	defer rows.Close()
+	for rows.Next() {
+		var url string
+		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
+		if err := rows.Scan(&url); err != nil {
+			panic(err)
+		}
+		urls = append(urls, url)
+	}
+	return urls
+}
+
+// 全リソースに対しHEADメソッドを投げて404かチェック。
+// 404だったURLのレコード数を返す
+func isResourceExist(urls []string) int {
+
+	var res *http.Response
+	count := 0
+
+	for _, url := range urls {
+		res, _ = http.Head(url)
+		fmt.Println("status code: ", res.StatusCode)
+		// もし404かつフラグが立ってないならば、flagをon
+		if res.StatusCode == 404 && getFlag(url) == 0 {
+			fmt.Println("404!!")
+			updateFlag(url)
+			count += 1
+		}
+	}
+	return count
+}
+
+func getFlag(url string) (flag int) {
+
+	row := db.QueryRow(`SELECT flag FROM urls WHERE url=?`, url)
+
+	err := row.Scan(&flag)
+
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func updateFlag(targetURL string) {
+	_, err := db.Exec(`UPDATE urls SET flag=1 WHERE url=?`, targetURL)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // org -u
-func update() {
-}
+//func update() {
+//}
 
 // org -d
 func delete() {
@@ -423,25 +469,6 @@ func readURL(key interface{}) string {
 	return url // 該当行がなかった場合は、""(空文字)が返る点に注意
 }
 
-//func update(newValue string, id int) {
-//	// 更新
-//	res, err := db.Exec(
-//		`UPDATE memo SET body=? WHERE id=?`,
-//		newValue,
-//		id,
-//	)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// 更新されたレコード数
-//	affect, err := res.RowsAffected()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	fmt.Printf("affected by update: %d\n", affect)
-//}
 //
 //func delete(id int) {
 //	// 削除
@@ -499,8 +526,9 @@ func parse() {
 	case "list", "-l", "--list":
 		fmt.Println("list!")
 		list()
-	//case "-f":
-	//	fmt.Println("openURL!")
+	case "fetch", "-f", "--fetch":
+		fmt.Println("fetch!!")
+		fetch()
 	default:
 		fmt.Println("no such command. exit...")
 		os.Exit(1)
@@ -515,28 +543,6 @@ func isEqualOrGreaterThanMinArgs(minimum int) bool {
 }
 
 func main() {
-
 	parse()
-
-	//add()
-	//list()
-
-	// openURL()
-
-	//create()
-	// readAll()
-	// read(5)
-	// update("月曜おはす〜", 3)
-
-	//delete(4)
-	//readAll()
-	//
-	//create()
-	//readAll()
-
-	//create("マリリ")
-	//readAll()
-
-	//db.Close()
-
+	db.Close()
 }
