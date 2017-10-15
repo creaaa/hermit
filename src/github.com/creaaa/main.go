@@ -129,17 +129,29 @@ func openURL() {
 }
 
 // org -a
-func add(url, alias, desc string) {
+func add() {
 
-	if url == "" {
-		panic("no url!")
-	} else if alias == "" {
-		panic("no alias!")
+	args := os.Args
+
+	if len(args) < 4 {
+		panic("invalid argument: you need to add at least URL & alias")
+	}
+
+	// URLバリデーション
+	if !strings.HasPrefix(args[2], "http") && !strings.HasPrefix(args[2], "https") {
+		panic("invalid URL")
 	}
 
 	var (
-		flag int = 0
+		url   = args[2]
+		alias = args[3]
+		desc  string
+		flag  int = 0
 	)
+
+	if len(args) >= 5 {
+		desc = args[4]
+	}
 
 	_, err := db.Exec(
 		`INSERT INTO urls (alias, desc, url, flag) VALUES (?, ?, ?, ?)`,
@@ -338,16 +350,49 @@ func readURL(key interface{}) string {
 //	fmt.Printf("affected by delete: %d\n", affect)
 //}
 
+func parse() {
+
+	if len(os.Args) < 2 {
+		fmt.Println("Invalid argument. exit...")
+		os.Exit(1)
+	}
+
+	switch os.Args[1] {
+	case "-o":
+		fmt.Println("openURL!")
+		openURL()
+	case "add", "-a", "--add":
+		fmt.Println("add!")
+		add()
+	//case "-n":
+	//	fmt.Println("openURL!")
+	//case "-e":
+	//	fmt.Println("openURL!")
+	//case "-u":
+	//	fmt.Println("openURL!")
+	//case "-d":
+	//	fmt.Println("openURL!")
+	case "list", "-l", "--list":
+		fmt.Println("openURL!")
+		list()
+	//case "-da":
+	//	fmt.Println("openURL!")
+	//case "-f":
+	//	fmt.Println("openURL!")
+	default:
+		fmt.Println("no such command. exit...")
+		os.Exit(1)
+	}
+}
+
 func main() {
 
-	//setup()
-	//add("https://www.youtube.com/watch?v=87wf45zW5NA",
-	//	"sayoemo",
-	//	"さよならはエモーション")
+	parse()
 
+	//add()
 	//list()
 
-	openURL()
+	// openURL()
 
 	//create()
 	// readAll()
