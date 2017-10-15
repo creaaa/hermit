@@ -80,6 +80,35 @@ func setup() {
 	db_exec(db, q)
 }
 
+func argParse(args []string) []string {
+	for idx, arg := range os.Args {
+		if idx == 0 || idx == 1 {
+			continue
+		}
+
+		if strings.HasPrefix(arg, "http") || strings.HasPrefix(arg, "https") {
+			fmt.Println("this is url!!")
+			args = append(args, arg)
+		} else if i, err := strconv.Atoi(arg); err == nil {
+			// intがまざってたら、URLに変換する処理を書く
+			fmt.Println("int!!!")
+			// DBから、IDをキーにURLを取得
+			if url := readURL(i); url != "" {
+				args = append(args, url)
+				fmt.Println("おら", args)
+			}
+		} else {
+			fmt.Println("エイリアスの可能性!")
+			// エイリアスならURLに変換する処理を書く
+			if url := readURL(arg); url != "" {
+				args = append(args, url)
+			}
+		}
+	}
+	fmt.Println("最終結果: ", args)
+	return args
+}
+
 // org -o
 func openURL() {
 	// current directory
@@ -90,37 +119,38 @@ func openURL() {
 	// res, _ := exec.Command("ls", "-la").Output()
 	// fmt.Printf("%s", res)
 
-	// urls := []string{}
 	urls := []string{
 		"-a", "Google Chrome", "-n",
 		"--args", "--incognito",
 	}
 
-	for idx, arg := range os.Args {
-		if idx == 0 {
-			continue
-		}
+	urls = argParse(urls)
 
-		if strings.HasPrefix(arg, "http") || strings.HasPrefix(arg, "https") {
-			fmt.Println("this is url!!")
-			urls = append(urls, arg)
-		} else if i, err := strconv.Atoi(arg); err == nil {
-			// intがまざってたら、URLに変換する処理を書く
-			fmt.Println("int!!!")
-			// DBから、IDをキーにURLを取得
-			if url := readURL(i); url != "" {
-				urls = append(urls, url)
-			}
-		} else {
-			fmt.Println("エイリアスの可能性!")
-			// エイリアスならURLに変換する処理を書く
-			if url := readURL(arg); url != "" {
-				urls = append(urls, url)
-			}
-		}
-	}
+	//for idx, arg := range os.Args {
+	//	if idx == 0 || idx == 1 {
+	//		continue
+	//	}
+	//
+	//	if strings.HasPrefix(arg, "http") || strings.HasPrefix(arg, "https") {
+	//		fmt.Println("this is url!!")
+	//		urls = append(urls, arg)
+	//	} else if i, err := strconv.Atoi(arg); err == nil {
+	//		// intがまざってたら、URLに変換する処理を書く
+	//		fmt.Println("int!!!")
+	//		// DBから、IDをキーにURLを取得
+	//		if url := readURL(i); url != "" {
+	//			urls = append(urls, url)
+	//		}
+	//	} else {
+	//		fmt.Println("エイリアスの可能性!")
+	//		// エイリアスならURLに変換する処理を書く
+	//		if url := readURL(arg); url != "" {
+	//			urls = append(urls, url)
+	//		}
+	//	}
+	//}
 
-	fmt.Println(urls)
+	fmt.Println("くそかす", urls)
 
 	// exec.Command("open", "-a", "Google Chrome", "-n",
 	//	"--args", "--incognito", "http://www.yahoo.co.jp", "https://www.google.ca/").Run()
@@ -133,9 +163,13 @@ func add() {
 
 	args := os.Args
 
-	if len(args) < 4 {
-		panic("invalid argument: you need to add at least URL & alias")
-	}
+	//if len(args) < 4 {
+	//	panic("invalid argument: you need to add at least URL & alias")
+	//}
+
+	//if !isEqualOrGreaterThanMinArgs(3) {
+	//	panic("invalid argument: you need to add at least URL & alias")
+	//}
 
 	// URLバリデーション
 	if !strings.HasPrefix(args[2], "http") && !strings.HasPrefix(args[2], "https") {
@@ -214,8 +248,24 @@ func update() {
 }
 
 // org -d
-func delete() {
-}
+//func delete() {
+//
+//	res, err := db.Exec(
+//		`DELETE FROM memo WHERE ID=?`,
+//		id,
+//	)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	// 削除されたレコード数
+//	affect, err := res.RowsAffected()
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	fmt.Printf("affected by delete: %d\n", affect)
+//}
 
 // org -da
 func deleteAll() {
@@ -300,6 +350,8 @@ func readURL(key interface{}) string {
 
 	err := row.Scan(&url)
 
+	fmt.Println("urlだーーー", url)
+
 	// エラー内容による分岐
 	switch {
 	case err == sql.ErrNoRows:
@@ -363,15 +415,24 @@ func parse() {
 		openURL()
 	case "add", "-a", "--add":
 		fmt.Println("add!")
-		add()
+		if isEqualOrGreaterThanMinArgs(4) {
+			add()
+		} else {
+			panic("invalid argument: you need to add at least URL & alias")
+		}
 	//case "-n":
 	//	fmt.Println("openURL!")
 	//case "-e":
 	//	fmt.Println("openURL!")
 	//case "-u":
 	//	fmt.Println("openURL!")
-	//case "-d":
-	//	fmt.Println("openURL!")
+	case "delete", "-d", "--delete":
+		fmt.Println("delete!")
+		if isEqualOrGreaterThanMinArgs(3) {
+			//delete()
+		} else {
+			panic("invalid argument: you need to add at least URL & alias")
+		}
 	case "list", "-l", "--list":
 		fmt.Println("openURL!")
 		list()
@@ -383,6 +444,13 @@ func parse() {
 		fmt.Println("no such command. exit...")
 		os.Exit(1)
 	}
+}
+
+func isEqualOrGreaterThanMinArgs(minimum int) bool {
+	if len(os.Args) >= minimum {
+		return true
+	}
+	return false
 }
 
 func main() {
