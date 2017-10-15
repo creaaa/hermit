@@ -346,6 +346,21 @@ func delete() {
 	fmt.Printf("affected by delete: %d\n", affect)
 }
 
+func deleteOnlyFlagOn() {
+	res, err := db.Exec(`DELETE FROM urls WHERE flag=1`)
+	if err != nil {
+		panic(err)
+	}
+
+	// 削除されたレコード数
+	affect, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("affected by delete: %d\n", affect)
+}
+
 // org -da
 func deleteAll() {
 
@@ -514,9 +529,14 @@ func parse() {
 	//case "-u":
 	//	fmt.Println("openURL!")
 	case "delete", "-d", "--delete":
-		fmt.Println("delete!")
 		if isEqualOrGreaterThanMinArgs(3) {
-			delete()
+			// -f をつけると、flagがonのものだけ消す
+			if os.Args[2] == "-f" || os.Args[2] == "--flag" {
+				fmt.Println("delete only flag!")
+				deleteOnlyFlagOn()
+			} else {
+				delete()
+			}
 		} else {
 			panic("invalid argument: you need to add at least URL or alias or ID")
 		}
