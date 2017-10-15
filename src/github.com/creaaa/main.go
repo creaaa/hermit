@@ -29,6 +29,8 @@ import (
 
 	"os/exec"
 
+	"bufio"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -152,7 +154,7 @@ func openURL() {
 	//	}
 	//}
 
-	fmt.Println("くそかす", urls)
+	fmt.Println("ks", urls)
 
 	// exec.Command("open", "-a", "Google Chrome", "-n",
 	//	"--args", "--incognito", "http://www.yahoo.co.jp", "https://www.google.ca/").Run()
@@ -300,6 +302,33 @@ func delete() {
 
 // org -da
 func deleteAll() {
+
+	var (
+		res sql.Result
+		err error
+	)
+
+	fmt.Println("Do you really delete all records? [Y/n]")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	if scanner.Text() == "y" || scanner.Text() == "Y" {
+		res, err = db.Exec(`DELETE FROM urls`)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fmt.Println("did nothing...")
+	}
+
+	// 削除されたレコード数
+	affect, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("affected by delete: %d\n", affect)
+
 }
 
 //////////////////////////////////////////////////
@@ -464,11 +493,12 @@ func parse() {
 		} else {
 			panic("invalid argument: you need to add at least URL or alias or ID")
 		}
+	case "deleteall", "-da", "--deleteall":
+		fmt.Println("deleteAll!")
+		deleteAll()
 	case "list", "-l", "--list":
-		fmt.Println("openURL!")
+		fmt.Println("list!")
 		list()
-	//case "-da":
-	//	fmt.Println("openURL!")
 	//case "-f":
 	//	fmt.Println("openURL!")
 	default:
@@ -508,4 +538,5 @@ func main() {
 	//readAll()
 
 	//db.Close()
+
 }
