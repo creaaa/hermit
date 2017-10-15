@@ -27,6 +27,8 @@ import (
 	"strconv"
 	"strings"
 
+	"os/exec"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -88,7 +90,11 @@ func openURL() {
 	// res, _ := exec.Command("ls", "-la").Output()
 	// fmt.Printf("%s", res)
 
-	urls := []string{}
+	// urls := []string{}
+	urls := []string{
+		"-a", "Google Chrome", "-n",
+		"--args", "--incognito",
+	}
 
 	for idx, arg := range os.Args {
 		if idx == 0 {
@@ -116,9 +122,10 @@ func openURL() {
 
 	fmt.Println(urls)
 
-	//exec.Command("open", "-a", "Google Chrome", "-n",
+	// exec.Command("open", "-a", "Google Chrome", "-n",
 	//	"--args", "--incognito", "http://www.yahoo.co.jp", "https://www.google.ca/").Run()
 
+	exec.Command("open", urls...).Run()
 }
 
 // org -a
