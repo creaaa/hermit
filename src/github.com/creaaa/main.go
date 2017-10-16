@@ -11,6 +11,14 @@ db, err = sql.Open("sqlite3", "./unko.db")
 これ、大いに役立った
 http://kuroeveryday.blogspot.ca/2017/08/sqlite3-with-golang.html
 
+ハマりポイント！！！
+当たり前で、早く気付けよって感じだが、
+current directory の出力: os.Getwd() は、ターミナルのカレントディレクトリの影響を受ける！！
+「ファイルがどこに位置しているか」は関係ない！！
+これは、プログラム内でファイルを相対パスで指定しているとき、バリバリ影響を受けるってこと！！
+ターミナルから実行するとき、これは注意だ！
+てかそれなら、たいていの場合、絶対パス指定のほうが望ましい...望ましいよね?
+
 */
 
 package main
@@ -77,7 +85,7 @@ func setup() {
 	q += " id INTEGER PRIMARY KEY AUTOINCREMENT"
 	q += ", alias VARCHAR(32) NOT NULL"
 	q += ", desc VARCHAR(255)"
-	q += ", url VARCHAR(255) NOT NULL"
+	q += ", url VARCHAR(255) NOT NULL UNIQUE"
 	q += ", flag INTEGER"
 	q += ")"
 
