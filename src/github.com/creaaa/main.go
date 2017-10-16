@@ -43,6 +43,8 @@ import (
 
 	"sort"
 
+	"github.com/mattn/go-pipeline"
+	_ "github.com/mattn/go-pipeline"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -528,6 +530,31 @@ func subRoutine(ids []int, inspector int) int {
 	return inspector
 }
 
+func ExampleCommandPipeLine() {
+	out, err := pipeline.Output(
+	//[]string{"git", "log", "--oneline"},
+	//[]string{"grep", "1st commit"},
+	//[]string{"wc", "-l"},
+
+	// これもいけた
+	//[]string{"ls", "-la"},
+	//[]string{"peco"},
+
+	// []string{"cd", "../../.."},
+	//[]string{"pwd"},
+
+	//[]string{"sqlite3", "data.db", "<", "activate.sql"},
+	//[]string{"select", "*", "from", "urls"},
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(out))
+	// Output:
+	// 1
+}
+
 func main() {
 	//setup()
 	//parse()
@@ -535,9 +562,14 @@ func main() {
 
 	// fmt.Println(getMinimumID())
 
-	// 外部コマンドの結果をターミナルに出したいなら、こうしてわざわざ変数に入れないといけない
-	res, _ := exec.Command("sqlite3", "data.db").Output()
-	//res2, _ := exec.Command("select", "* from urls;").Output()
-	fmt.Printf("%s", res)
+	// きた！！！！！！！！！！！！！！
+	cmdstr := "sqlite3 data.db < activate.sql"
+	out, _ := exec.Command("sh", "-c", cmdstr).Output()
+
+	// go-pipelineでもどうにかいけないか
+
+	fmt.Printf("%s", out)
+
+	//ExampleCommandPipeLine()
 
 }
