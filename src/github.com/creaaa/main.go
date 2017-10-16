@@ -82,7 +82,7 @@ func setup() {
 	//q += ")"
 
 	q = "CREATE TABLE urls ("
-	q += " id INTEGER PRIMARY KEY AUTOINCREMENT"
+	q += " id INTEGER PRIMARY KEY"
 	q += ", alias VARCHAR(32) NOT NULL"
 	q += ", desc VARCHAR(255)"
 	q += ", url VARCHAR(255) NOT NULL UNIQUE"
@@ -193,7 +193,7 @@ func explain() {
 func list() {
 	// 複数レコード取得
 	rows, err := db.Query(
-		`SELECT id, alias, desc, flag FROM urls`,
+		`SELECT id, alias, desc, url, flag FROM urls`,
 	)
 	if err != nil {
 		panic(err)
@@ -206,6 +206,7 @@ func list() {
 			id    int
 			alias string
 			desc  string
+			url   string
 			flag  int
 		)
 
@@ -216,11 +217,11 @@ func list() {
 		// これをイヤと思うのはSwift脳だからだろうか...
 
 		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
-		if err := rows.Scan(&id, &alias, &desc, &flag); err != nil {
+		if err := rows.Scan(&id, &alias, &desc, &url, &flag); err != nil {
 			log.Fatal("rows.Scan()", err)
 			return
 		}
-		fmt.Printf("id: %d, alias: %s, desc: %s, flag: %d\n", id, alias, desc, flag)
+		fmt.Printf("id: %d, alias: %s, desc: %s, url: %s, flag: %d\n", id, alias, desc, url, flag)
 	}
 }
 
@@ -472,12 +473,16 @@ func readURL(key interface{}) string {
 	case int:
 		row = db.QueryRow(`SELECT url FROM urls WHERE ID=?`, key)
 	case string:
+		fmt.Println("ここってことやな！", key)
+		// エイリアスが同じでも、QueryRowなら最初の1行だけ返すだけ!
 		row = db.QueryRow(`SELECT url FROM urls WHERE ALIAS=?`, key)
 	}
 
 	var url string
 
 	err := row.Scan(&url)
+
+	//fmt.Println("ここってことやな！")
 
 	fmt.Println("urlだーーー", url)
 
@@ -570,7 +575,17 @@ func isEqualOrGreaterThanMinArgs(minimum int) bool {
 	return false
 }
 
+// IDの最小値を求める
+func getMinimumID() {
+	var id int
+	row := db.QueryRow(`SELECT min(id) FROM urls`)
+	row.Scan(&id)
+	fmt.Println(id)
+}
+
 func main() {
+	//setup()
 	parse()
-	db.Close()
+	//db.Close()
+
 }
