@@ -44,7 +44,7 @@ import (
 	"sort"
 
 	"github.com/mattn/go-pipeline"
-	_ "github.com/mattn/go-pipeline"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -183,32 +183,63 @@ func explain() {
 
 // org -l
 func list() {
-	// 複数レコード取得
-	rows, err := db.Query(
-		`SELECT id, alias, desc, url, flag FROM urls`,
-	)
+
+	//// 複数レコード取得
+	//rows, err := db.Query(
+	//	`SELECT id, alias, desc, url, flag FROM urls`,
+	//)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//// 処理が終わったらカーソルを閉じる
+	//defer rows.Close()
+	//for rows.Next() {
+	//	var (
+	//		id    int
+	//		alias string
+	//		desc  string
+	//		url   string
+	//		flag  int
+	//	)
+	//
+	//	// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
+	//	if err := rows.Scan(&id, &alias, &desc, &url, &flag); err != nil {
+	//		log.Fatal("rows.Scan()", err)
+	//		return
+	//	}
+	//	fmt.Printf("id: %d, alias: %s, desc: %s, url: %s, flag: %d\n", id, alias, desc, url, flag)
+	//}
+
+	// .sqlitercに追記
+
+	// プロジェクト直下のパスを保存しておく
+	projectRoot, _ := os.Getwd()
+
+	homePath := os.Getenv("HOME")
+	err0 := os.Chdir(homePath)
+	if err0 != nil {
+		panic(err0)
+	}
+
+	f, err := os.OpenFile(".sqliterc", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
+	f.WriteString(".header on\n.mode column\n")
 
-	// 処理が終わったらカーソルを閉じる
-	defer rows.Close()
-	for rows.Next() {
-		var (
-			id    int
-			alias string
-			desc  string
-			url   string
-			flag  int
-		)
-
-		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
-		if err := rows.Scan(&id, &alias, &desc, &url, &flag); err != nil {
-			log.Fatal("rows.Scan()", err)
-			return
-		}
-		fmt.Printf("id: %d, alias: %s, desc: %s, url: %s, flag: %d\n", id, alias, desc, url, flag)
+	err2 := os.Chdir(projectRoot)
+	if err != nil {
+		panic(err2)
 	}
+
+	// きた！！！！！！！！！！！！！！
+	// 環境変数で事故るおそれがある、とのこと...
+	cmdstr := "sqlite3 data.db < activate.sql"
+	out, _ := exec.Command("sh", "-c", cmdstr).Output()
+	fmt.Printf("%s", out)
+
 }
 
 // org -f
@@ -557,19 +588,9 @@ func ExampleCommandPipeLine() {
 
 func main() {
 	//setup()
-	//parse()
+	parse()
 	//db.Close()
 
 	// fmt.Println(getMinimumID())
-
-	// きた！！！！！！！！！！！！！！
-	cmdstr := "sqlite3 data.db < activate.sql"
-	out, _ := exec.Command("sh", "-c", cmdstr).Output()
-
-	// go-pipelineでもどうにかいけないか
-
-	fmt.Printf("%s", out)
-
-	//ExampleCommandPipeLine()
 
 }
