@@ -77,12 +77,6 @@ func setup() {
 
 	var q = ""
 
-	//q = "CREATE TABLE memo ("
-	//q += " id INTEGER PRIMARY KEY AUTOINCREMENT"
-	//q += ", body VARCHAR(255) NOT NULL"
-	//q += ", created_at TIMESTAMP DEFAULT (DATETIME('now','localtime'))"
-	//q += ")"
-
 	q = "CREATE TABLE urls ("
 	q += " id INTEGER PRIMARY KEY"
 	q += ", alias VARCHAR(32) NOT NULL"
@@ -95,7 +89,7 @@ func setup() {
 }
 
 // これ、スライス(参照型)渡してるから元来破壊的かと思ったが、
-// なぜか ちゃんと結果を ([]string) 返さないとだめだった。
+// なぜか ちゃんと結果を ([]string) 返さないとだめだった。なんで..
 func argParse(args []string) []string {
 	for idx, arg := range os.Args {
 		if idx == 0 || idx == 1 {
@@ -150,14 +144,6 @@ func add() {
 
 	args := os.Args
 
-	//if len(args) < 4 {
-	//	panic("invalid argument: you need to add at least URL & alias")
-	//}
-
-	//if !isEqualOrGreaterThanMinArgs(3) {
-	//	panic("invalid argument: you need to add at least URL & alias")
-	//}
-
 	// URLバリデーション
 	if !strings.HasPrefix(args[2], "http") && !strings.HasPrefix(args[2], "https") {
 		panic("invalid URL")
@@ -171,11 +157,6 @@ func add() {
 		flag  int = 0
 	)
 
-	// レコードが0件の場合
-	if id == 0 {
-		id = 1
-	}
-
 	if len(args) >= 5 {
 		desc = args[4]
 	}
@@ -187,6 +168,7 @@ func add() {
 	if err != nil {
 		panic(err)
 	}
+
 }
 
 // org -n
@@ -239,12 +221,6 @@ func fetch() {
 	// 404を返したレコードに対しフラグをオン
 	count := isResourceExist(urls)
 
-	// 更新されたレコード数
-	//affect, err := res.RowsAffected()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
 	fmt.Printf("affected by update: %d\n", count)
 }
 
@@ -294,7 +270,6 @@ func isResourceExist(urls []string) int {
 func getFlag(url string) (flag int) {
 
 	row := db.QueryRow(`SELECT flag FROM urls WHERE url=?`, url)
-
 	err := row.Scan(&flag)
 
 	if err != nil {
@@ -310,19 +285,10 @@ func updateFlag(targetURL string) {
 	}
 }
 
-// org -u
-//func update() {
-//}
-
 // org -d
 func delete() {
-
 	args := argParse([]string{})
 
-	//res, err := db.Exec(
-	//	`DELETE FROM urls WHERE ID=?`,
-	//	args[0], // 1個しか消せないようにした
-	//)
 	var (
 		res sql.Result
 		err error
@@ -406,27 +372,12 @@ func deleteAll() {
 	}
 
 	fmt.Printf("affected by delete: %d\n", affect)
-
 }
 
 //////////////////////////////////////////////////
 
 func create(body string) {
 
-	// まごころこめるとこう
-
-	//var q = ""
-	//
-	//q = "INSERT INTO memo "
-	//q += " (body)"
-	//q += " VALUES"
-	//q += " ('body1')"
-	//q += ",('body2')"
-	//q += ",('body3')"
-	//db_exec(db, q)
-
-	// ライブラリの恩恵に授かるとこう
-	/*res*/
 	_, err := db.Exec(
 		`INSERT INTO memo (body) VALUES (?)`,
 		body,
@@ -434,13 +385,6 @@ func create(body string) {
 	if err != nil {
 		panic(err)
 	}
-
-	// 挿入処理の結果からIDを取得
-	//id, err := res.LastInsertId()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//fmt.Println(id)
 }
 
 func readAll() {
@@ -458,12 +402,6 @@ func readAll() {
 		var id int
 		var body string
 		var created time.Time
-
-		// カーソルから値を取得
-		// ...なんかこう、C言語チックな「副作用前提の」コードバリバリ使うんやな。
-		// これあんま好きじゃねぇな...
-		// たった1節で、エラー処理とエラーなし時の処理を同時に書けるのがメリットなんだろう。
-		// これをイヤと思うのはSwift脳だからだろうか...
 
 		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
 		if err := rows.Scan(&id, &body, &created); err != nil {
@@ -487,12 +425,7 @@ func readURL(key interface{}) string {
 	}
 
 	var url string
-
 	err := row.Scan(&url)
-
-	//fmt.Println("ここってことやな！")
-
-	fmt.Println("urlだーーー", url)
 
 	// エラー内容による分岐
 	switch {
@@ -501,29 +434,8 @@ func readURL(key interface{}) string {
 	case err != nil:
 		panic(err)
 	}
-
 	return url // 該当行がなかった場合は、""(空文字)が返る点に注意
 }
-
-//
-//func delete(id int) {
-//	// 削除
-//	res, err := db.Exec(
-//		`DELETE FROM memo WHERE ID=?`,
-//		id,
-//	)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// 削除されたレコード数
-//	affect, err := res.RowsAffected()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	fmt.Printf("affected by delete: %d\n", affect)
-//}
 
 func parse() {
 
@@ -585,10 +497,6 @@ func isEqualOrGreaterThanMinArgs(minimum int) bool {
 
 // 空いているIDの最小値を求める
 func getMinimumID() int {
-	//var id int
-	//row := db.QueryRow(`SELECT min(id) FROM urls`)
-	//row.Scan(&id)
-	//return id
 
 	rows, err := db.Query(`SELECT id FROM urls`)
 	if err != nil {
@@ -609,7 +517,6 @@ func getMinimumID() int {
 
 	// ソート完了したので。。
 	return subRoutine(ids, 1)
-
 }
 
 func subRoutine(ids []int, inspector int) int {
@@ -627,7 +534,6 @@ func subRoutine(ids []int, inspector int) int {
 	// ないので終了
 	fmt.Println("ないので終了")
 	return inspector
-
 }
 
 func main() {
@@ -636,5 +542,4 @@ func main() {
 	//db.Close()
 
 	fmt.Println(getMinimumID())
-
 }
