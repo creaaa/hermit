@@ -41,6 +41,8 @@ import (
 
 	"net/http"
 
+	"sort"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -162,19 +164,25 @@ func add() {
 	}
 
 	var (
+		id    = getMinimumID()
 		url   = args[2]
 		alias = args[3]
 		desc  string
 		flag  int = 0
 	)
 
+	// レコードが0件の場合
+	if id == 0 {
+		id = 1
+	}
+
 	if len(args) >= 5 {
 		desc = args[4]
 	}
 
 	_, err := db.Exec(
-		`INSERT INTO urls (alias, desc, url, flag) VALUES (?, ?, ?, ?)`,
-		alias, desc, url, flag,
+		`INSERT INTO urls (id, alias, desc, url, flag) VALUES (?, ?, ?, ?, ?)`,
+		id, alias, desc, url, flag,
 	)
 	if err != nil {
 		panic(err)
@@ -575,17 +583,58 @@ func isEqualOrGreaterThanMinArgs(minimum int) bool {
 	return false
 }
 
-// IDの最小値を求める
-func getMinimumID() {
-	var id int
-	row := db.QueryRow(`SELECT min(id) FROM urls`)
-	row.Scan(&id)
-	fmt.Println(id)
+// 空いているIDの最小値を求める
+func getMinimumID() int {
+	//var id int
+	//row := db.QueryRow(`SELECT min(id) FROM urls`)
+	//row.Scan(&id)
+	//return id
+
+	rows, err := db.Query(`SELECT id FROM urls`)
+	if err != nil {
+		panic(err)
+	}
+
+	ids := []int{}
+
+	for rows.Next() {
+		var id int
+		rows.Scan(&id)
+		ids = append(ids, id)
+	}
+
+	sort.Ints(ids)
+
+	fmt.Println("ソート済: ", ids)
+
+	// ソート完了したので。。
+	return subRoutine(ids, 1)
+
+}
+
+func subRoutine(ids []int, inspector int) int {
+	fmt.Println("調査開始！", ids)
+	for _, id := range ids {
+		if id == inspector {
+			// あったのでまだ調査
+			fmt.Println("あったのでまだ調査: 次は", ids, inspector+1)
+			return subRoutine(ids, inspector+1)
+		} else {
+			fmt.Println("現在のID: ", id, "調査対象: ", inspector)
+			fmt.Println("違った")
+		}
+	}
+	// ないので終了
+	fmt.Println("ないので終了")
+	return inspector
+
 }
 
 func main() {
 	//setup()
 	parse()
 	//db.Close()
+
+	fmt.Println(getMinimumID())
 
 }
