@@ -222,13 +222,16 @@ func list() {
 		panic(err0)
 	}
 
-	f, err := os.OpenFile(".sqliterc", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	f, err := os.OpenFile(".sqliterc", os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
-	f.WriteString(".header on\n.mode column\n")
+	// no = かきこんだバイト数
+	no, _ := f.WriteString(".header on\n.mode column\n")
+	fmt.Println("なんだこれは", no)
 
+	// もとの場所に戻ってくる
 	err2 := os.Chdir(projectRoot)
 	if err != nil {
 		panic(err2)
@@ -239,7 +242,6 @@ func list() {
 	cmdstr := "sqlite3 data.db < activate.sql"
 	out, _ := exec.Command("sh", "-c", cmdstr).Output()
 	fmt.Printf("%s", out)
-
 }
 
 // org -f
