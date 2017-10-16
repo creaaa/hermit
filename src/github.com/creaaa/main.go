@@ -211,6 +211,98 @@ func list() {
 	//	fmt.Printf("id: %d, alias: %s, desc: %s, url: %s, flag: %d\n", id, alias, desc, url, flag)
 	//}
 
+	// 1. プロジェクト直下のパスを保存しておく
+	homePath := os.Getenv("HOME")
+	projectRoot, _ := os.Getwd()
+
+	// 2. ホームディレクトリに移動
+	move(homePath)
+
+	// 3. ファイルの存在を確認
+	if fileExists(".sqliterc") {
+		// あるルート(Aルート)
+		err := os.Rename(".sqliterc", ".sqliterc.backup")
+		if err != nil {
+			panic(err)
+		}
+		makeRC()
+
+		// もとの場所に戻ってくる
+		move(projectRoot) // projectroot
+
+		// 出力
+		pr()
+
+		// ルートの場所に戻ってくる
+		move(homePath)
+
+		// 突貫で作った.sqlitercを削除
+		err = os.Remove(".sqliterc")
+		if err != nil {
+			panic(err)
+		}
+
+		// 退避させておいたオリジナルの.sqlitercを復元
+		err = os.Rename(".sqliterc.backup", ".sqliterc")
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		// なかった(Bルート)
+		makeRC()
+
+		// もとの場所に戻ってくる
+		move(projectRoot)
+
+		// 出力
+		pr()
+
+		// ルートに戻ってくる
+		move(homePath)
+
+		// 突貫で作った.sqlitercを削除
+		err := os.Remove(".sqliterc")
+		if err != nil {
+			panic(err)
+		}
+	}
+
+}
+
+func makeRC() {
+	// つくる
+	f, err := os.OpenFile(".sqliterc", os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	// かきこむ
+	f.WriteString(".header on\n.mode column\n")
+
+}
+
+func fileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
+
+// 出力
+func pr() {
+	// 5. 出力
+	cmdstr := "sqlite3 data.db < activate.sql"
+	out, _ := exec.Command("sh", "-c", cmdstr).Output()
+	fmt.Printf("%s", out)
+}
+
+func move(path string) {
+	err := os.Chdir(path)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func prettyPrint() {
 	// .sqlitercに追記
 
 	// プロジェクト直下のパスを保存しておく

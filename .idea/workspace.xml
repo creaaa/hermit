@@ -17,24 +17,24 @@
       <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/github.com/creaaa/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="411">
-              <caret line="243" column="23" lean-forward="false" selection-start-line="243" selection-start-column="23" selection-end-line="243" selection-end-column="23" />
+            <state relative-caret-position="250">
+              <caret line="289" column="5" lean-forward="true" selection-start-line="289" selection-start-column="5" selection-end-line="289" selection-end-column="5" />
               <folding>
                 <element signature="e#527#717#0" expanded="true" />
-                <marker date="1508195934891" expanded="true" signature="2805:2873" ph="INSERT INTO urls... " />
-                <marker date="1508195934891" expanded="true" signature="4513:4533" ph="SELECT url F... urls" />
-                <marker date="1508195934891" expanded="true" signature="5262:5295" ph="SELECT flag urls" />
-                <marker date="1508195934891" expanded="true" signature="5428:5462" ph="UPDATE urls " />
-                <marker date="1508195934891" expanded="true" signature="5746:5774" ph="DELETE FROM " />
-                <marker date="1508195934891" expanded="true" signature="5947:5974" ph="DELETE FROM " />
-                <marker date="1508195934891" expanded="true" signature="6100:6130" ph="DELETE FROM " />
-                <marker date="1508195934891" expanded="true" signature="6387:6416" ph="DELETE FROM " />
-                <marker date="1508195934891" expanded="true" signature="6846:6862" ph="DELETE FROM " />
-                <marker date="1508195934891" expanded="true" signature="7185:7219" ph="INSERT INTO memo... " />
-                <marker date="1508195934891" expanded="true" signature="7326:7344" ph="SELECT * FRO... memo" />
-                <marker date="1508195934891" expanded="true" signature="7837:7868" ph="SELECT url F... urls" />
-                <marker date="1508195934891" expanded="true" signature="7982:8016" ph="SELECT url F... urls" />
-                <marker date="1508195934891" expanded="true" signature="9521:9540" ph="SELECT id FR... urls" />
+                <marker date="1508198045653" expanded="true" signature="2805:2873" ph="INSERT INTO urls... " />
+                <marker date="1508198045653" expanded="true" signature="5890:5910" ph="SELECT url F... urls" />
+                <marker date="1508198045653" expanded="true" signature="6639:6672" ph="SELECT flag urls" />
+                <marker date="1508198045653" expanded="true" signature="6805:6839" ph="UPDATE urls " />
+                <marker date="1508198045653" expanded="true" signature="7123:7151" ph="DELETE FROM " />
+                <marker date="1508198045653" expanded="true" signature="7324:7351" ph="DELETE FROM " />
+                <marker date="1508198045653" expanded="true" signature="7477:7507" ph="DELETE FROM " />
+                <marker date="1508198045653" expanded="true" signature="7764:7793" ph="DELETE FROM " />
+                <marker date="1508198045653" expanded="true" signature="8223:8239" ph="DELETE FROM " />
+                <marker date="1508198045653" expanded="true" signature="8562:8596" ph="INSERT INTO memo... " />
+                <marker date="1508198045653" expanded="true" signature="8703:8721" ph="SELECT * FRO... memo" />
+                <marker date="1508198045653" expanded="true" signature="9214:9245" ph="SELECT url F... urls" />
+                <marker date="1508198045653" expanded="true" signature="9359:9393" ph="SELECT url F... urls" />
+                <marker date="1508198045653" expanded="true" signature="10898:10917" ph="SELECT id FR... urls" />
               </folding>
             </state>
           </provider>
@@ -458,24 +458,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/github.com/creaaa/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
-          <caret line="243" column="23" lean-forward="false" selection-start-line="243" selection-start-column="23" selection-end-line="243" selection-end-column="23" />
+        <state relative-caret-position="250">
+          <caret line="289" column="5" lean-forward="true" selection-start-line="289" selection-start-column="5" selection-end-line="289" selection-end-column="5" />
           <folding>
             <element signature="e#527#717#0" expanded="true" />
-            <marker date="1508195934891" expanded="true" signature="2805:2873" ph="INSERT INTO urls... " />
-            <marker date="1508195934891" expanded="true" signature="4513:4533" ph="SELECT url F... urls" />
-            <marker date="1508195934891" expanded="true" signature="5262:5295" ph="SELECT flag urls" />
-            <marker date="1508195934891" expanded="true" signature="5428:5462" ph="UPDATE urls " />
-            <marker date="1508195934891" expanded="true" signature="5746:5774" ph="DELETE FROM " />
-            <marker date="1508195934891" expanded="true" signature="5947:5974" ph="DELETE FROM " />
-            <marker date="1508195934891" expanded="true" signature="6100:6130" ph="DELETE FROM " />
-            <marker date="1508195934891" expanded="true" signature="6387:6416" ph="DELETE FROM " />
-            <marker date="1508195934891" expanded="true" signature="6846:6862" ph="DELETE FROM " />
-            <marker date="1508195934891" expanded="true" signature="7185:7219" ph="INSERT INTO memo... " />
-            <marker date="1508195934891" expanded="true" signature="7326:7344" ph="SELECT * FRO... memo" />
-            <marker date="1508195934891" expanded="true" signature="7837:7868" ph="SELECT url F... urls" />
-            <marker date="1508195934891" expanded="true" signature="7982:8016" ph="SELECT url F... urls" />
-            <marker date="1508195934891" expanded="true" signature="9521:9540" ph="SELECT id FR... urls" />
+            <marker date="1508198045653" expanded="true" signature="2805:2873" ph="INSERT INTO urls... " />
+            <marker date="1508198045653" expanded="true" signature="5890:5910" ph="SELECT url F... urls" />
+            <marker date="1508198045653" expanded="true" signature="6639:6672" ph="SELECT flag urls" />
+            <marker date="1508198045653" expanded="true" signature="6805:6839" ph="UPDATE urls " />
+            <marker date="1508198045653" expanded="true" signature="7123:7151" ph="DELETE FROM " />
+            <marker date="1508198045653" expanded="true" signature="7324:7351" ph="DELETE FROM " />
+            <marker date="1508198045653" expanded="true" signature="7477:7507" ph="DELETE FROM " />
+            <marker date="1508198045653" expanded="true" signature="7764:7793" ph="DELETE FROM " />
+            <marker date="1508198045653" expanded="true" signature="8223:8239" ph="DELETE FROM " />
+            <marker date="1508198045653" expanded="true" signature="8562:8596" ph="INSERT INTO memo... " />
+            <marker date="1508198045653" expanded="true" signature="8703:8721" ph="SELECT * FRO... memo" />
+            <marker date="1508198045653" expanded="true" signature="9214:9245" ph="SELECT url F... urls" />
+            <marker date="1508198045653" expanded="true" signature="9359:9393" ph="SELECT url F... urls" />
+            <marker date="1508198045653" expanded="true" signature="10898:10917" ph="SELECT id FR... urls" />
           </folding>
         </state>
       </provider>
