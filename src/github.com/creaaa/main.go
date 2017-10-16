@@ -200,12 +200,6 @@ func list() {
 			flag  int
 		)
 
-		// カーソルから値を取得
-		// ...なんかこう、C言語チックな「副作用前提の」コードバリバリ使うんやな。
-		// これあんま好きじゃねぇな...
-		// たった1節で、エラー処理とエラーなし時の処理を同時に書けるのがメリットなんだろう。
-		// これをイヤと思うのはSwift脳だからだろうか...
-
 		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
 		if err := rows.Scan(&id, &alias, &desc, &url, &flag); err != nil {
 			log.Fatal("rows.Scan()", err)
@@ -510,36 +504,40 @@ func getMinimumID() int {
 		rows.Scan(&id)
 		ids = append(ids, id)
 	}
-
 	sort.Ints(ids)
-
-	fmt.Println("ソート済: ", ids)
+	//fmt.Println("ソート済: ", ids)
 
 	// ソート完了したので。。
 	return subRoutine(ids, 1)
 }
 
 func subRoutine(ids []int, inspector int) int {
-	fmt.Println("調査開始！", ids)
+	//fmt.Println("調査開始！", ids)
 	for _, id := range ids {
 		if id == inspector {
 			// あったのでまだ調査
-			fmt.Println("あったのでまだ調査: 次は", ids, inspector+1)
+			//fmt.Println("あったのでまだ調査: 次は", ids, inspector+1)
 			return subRoutine(ids, inspector+1)
 		} else {
-			fmt.Println("現在のID: ", id, "調査対象: ", inspector)
-			fmt.Println("違った")
+			//fmt.Println("現在のID: ", id, "調査対象: ", inspector)
+			//fmt.Println("違った")
 		}
 	}
 	// ないので終了
-	fmt.Println("ないので終了")
+	//fmt.Println("ないので終了")
 	return inspector
 }
 
 func main() {
 	//setup()
-	parse()
+	//parse()
 	//db.Close()
 
-	fmt.Println(getMinimumID())
+	// fmt.Println(getMinimumID())
+
+	// 外部コマンドの結果をターミナルに出したいなら、こうしてわざわざ変数に入れないといけない
+	res, _ := exec.Command("sqlite3", "data.db").Output()
+	//res2, _ := exec.Command("select", "* from urls;").Output()
+	fmt.Printf("%s", res)
+
 }
