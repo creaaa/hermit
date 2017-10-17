@@ -7,7 +7,7 @@
 ## Zen Mode Bookmark List That Drives Your Night
 
 <div align="center">
-<img src="https://github.com/creaaa/orgasm/blob/master/img/image.png">
+<img src="https://github.com/creaaa/orgasm/blob/master/image.png">
 </div>
 
 ### Caution
