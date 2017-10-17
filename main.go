@@ -447,25 +447,25 @@ func readURL(key interface{}) string {
 func showHelp() {
 	helpMessage := `
 		# add URL (make sure enclose URL in double quote if it includes '?')
-		$ orgasm add <"URL"> <alias> [description]
+		$ hermit add <"URL"> <alias> [description]
 		\n
 		# open URL
-		$ orgasm open <ID or alias>... # can designate multiple values by spacing
+		$ hermit open <ID or alias>... # can designate multiple values by spacing
 		\n
 		# shows list of URLs
-		$ orgasm list
+		$ hermit list
 		\n
 		# fetch whether URL returns 404, then update database
-		$ orgasm fetch
+		$ hermit fetch
 		\n
 		# delete URL
-		$ orgasm delete <ID or alias>... # can designate multiple values by spacing
+		$ hermit delete <ID or alias>... # can designate multiple values by spacing
 		\n
-		# delete only URL that is already 404 (need 'orgasm fetch' in advance)
-		$ orgasm delete -f
+		# delete only URL that is already 404 (need 'hermit fetch' in advance)
+		$ hermit delete -f
 		\n
 		# delete all URLs
-		$ orgasm deleteall
+		$ hermit deleteall
 	`
 
 	fmt.Println(helpMessage)
