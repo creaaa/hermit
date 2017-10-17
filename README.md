@@ -16,15 +16,15 @@ Hermit assumes that you set `$GOPATH` in `~/go` as the first path.
 If not, this does not work. This situation will be improved soon.
 Sorry for the inconvenience. thanks.
 
-### install
+### Install
 
 As I showed above, make sure you set `$GOPATH` in `~/go` as the first path in advance. 
 
 ```sh
-$ go get github.com/creaaa/orgasm
+$ go get github.com/creaaa/hermit
 ```
 
-### usage
+### Usage
 
 ```
 # add URL (make sure enclose URL in double quote if it includes `?`)
@@ -42,7 +42,7 @@ $ hermit fetch
 # delete URL
 $ hermit delete <ID or alias>
 
-# delete only URL that is already 404 (need `orgasm fetch` in advance)
+# delete only URL that is already 404 (need `hermit fetch` in advance)
 $ hermit delete -f
 
 # delete all URLs
