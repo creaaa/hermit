@@ -6,8 +6,9 @@
 
 ## Zen Mode Bookmark List That Drives Your Night
 
+<div align="center">
 <img src="https://github.com/creaaa/orgasm/blob/master/image.png">
-
+</div>
 ### Caution
 
 Orgasm assumes that you set `$GOPATH` in `~/go` as the first path.
