@@ -18,7 +18,6 @@ current directory の出力: os.Getwd() は、ターミナルのカレントデ�
 これは、プログラム内でファイルを相対パスで指定しているとき、バリバリ影響を受けるってこと！！
 ターミナルから実行するとき、これは注意だ！
 てかそれなら、たいていの場合、絶対パス指定のほうが望ましい...望ましいよね?
-
 */
 
 package main
@@ -40,19 +39,21 @@ import (
 var db *sql.DB
 
 func init() {
-	var err error
 
-	db, err = sql.Open("sqlite3", "../../../data.db")
-	if err != nil {
-		panic(err)
+	//db, err = sql.Open("sqlite3", "data.db")
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	if !fileExists("") {
 	}
+	//setup()
 }
 
 func db_exec(db *sql.DB, q string) {
 	var _, err = db.Exec(q)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		panic(err)
 	}
 }
 
@@ -522,6 +523,9 @@ func subRoutine(ids []int, inspector int) int {
 }
 
 func main() {
-	//setup()
-	parse()
+	// parse()
+
+	gopath := os.Getenv("GOPATH")
+	fmt.Println(gopath)
+
 }
