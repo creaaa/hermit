@@ -24,26 +24,15 @@ current directory の出力: os.Getwd() は、ターミナルのカレントデ�
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
+	"net/http"
 	"os"
-
-	"log"
-
-	"time"
-
+	"os/exec"
+	"sort"
 	"strconv"
 	"strings"
-
-	"os/exec"
-
-	"bufio"
-
-	"net/http"
-
-	"sort"
-
-	"github.com/mattn/go-pipeline"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -51,19 +40,11 @@ import (
 var db *sql.DB
 
 func init() {
-	fmt.Println("init!!")
-
-	//// current directory
-	dir, err := os.Getwd()
-	fmt.Println(dir)
-
-	//var err error
+	var err error
 
 	db, err = sql.Open("sqlite3", "../../../data.db")
-
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		panic(err)
 	}
 }
 
@@ -123,9 +104,6 @@ func argParse(args []string) []string {
 
 // org -o
 func openURL() {
-	// current directory
-	//dir, _ := os.Getwd()
-	//fmt.Println(dir)
 
 	// 外部コマンドの結果をターミナルに出したいなら、こうしてわざわざ変数に入れないといけない
 	// res, _ := exec.Command("ls", "-la").Output()
@@ -184,33 +162,6 @@ func explain() {
 // org -l
 func list() {
 
-	//// 複数レコード取得
-	//rows, err := db.Query(
-	//	`SELECT id, alias, desc, url, flag FROM urls`,
-	//)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//// 処理が終わったらカーソルを閉じる
-	//defer rows.Close()
-	//for rows.Next() {
-	//	var (
-	//		id    int
-	//		alias string
-	//		desc  string
-	//		url   string
-	//		flag  int
-	//	)
-	//
-	//	// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
-	//	if err := rows.Scan(&id, &alias, &desc, &url, &flag); err != nil {
-	//		log.Fatal("rows.Scan()", err)
-	//		return
-	//	}
-	//	fmt.Printf("id: %d, alias: %s, desc: %s, url: %s, flag: %d\n", id, alias, desc, url, flag)
-	//}
-
 	// 1. プロジェクト直下のパスを保存しておく
 	homePath := os.Getenv("HOME")
 	projectRoot, _ := os.Getwd()
@@ -226,22 +177,17 @@ func list() {
 			panic(err)
 		}
 		makeRC()
-
 		// もとの場所に戻ってくる
 		move(projectRoot) // projectroot
-
 		// 出力
 		pr()
-
 		// ルートの場所に戻ってくる
 		move(homePath)
-
 		// 突貫で作った.sqlitercを削除
 		err = os.Remove(".sqliterc")
 		if err != nil {
 			panic(err)
 		}
-
 		// 退避させておいたオリジナルの.sqlitercを復元
 		err = os.Rename(".sqliterc.backup", ".sqliterc")
 		if err != nil {
@@ -250,23 +196,18 @@ func list() {
 	} else {
 		// なかった(Bルート)
 		makeRC()
-
 		// もとの場所に戻ってくる
 		move(projectRoot)
-
 		// 出力
 		pr()
-
 		// ルートに戻ってくる
 		move(homePath)
-
 		// 突貫で作った.sqlitercを削除
 		err := os.Remove(".sqliterc")
 		if err != nil {
 			panic(err)
 		}
 	}
-
 }
 
 func makeRC() {
@@ -276,10 +217,8 @@ func makeRC() {
 		panic(err)
 	}
 	defer f.Close()
-
 	// かきこむ
 	f.WriteString(".header on\n.mode column\n")
-
 }
 
 func fileExists(filename string) bool {
@@ -289,7 +228,6 @@ func fileExists(filename string) bool {
 
 // 出力
 func pr() {
-	// 5. 出力
 	cmdstr := "sqlite3 data.db < activate.sql"
 	out, _ := exec.Command("sh", "-c", cmdstr).Output()
 	fmt.Printf("%s", out)
@@ -300,40 +238,6 @@ func move(path string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func prettyPrint() {
-	// .sqlitercに追記
-
-	// プロジェクト直下のパスを保存しておく
-	projectRoot, _ := os.Getwd()
-
-	homePath := os.Getenv("HOME")
-	err0 := os.Chdir(homePath)
-	if err0 != nil {
-		panic(err0)
-	}
-
-	f, err := os.OpenFile(".sqliterc", os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	// no = かきこんだバイト数
-	no, _ := f.WriteString(".header on\n.mode column\n")
-	fmt.Println("なんだこれは", no)
-
-	// もとの場所に戻ってくる
-	err2 := os.Chdir(projectRoot)
-	if err != nil {
-		panic(err2)
-	}
-
-	// きた！！！！！！！！！！！！！！
-	// 環境変数で事故るおそれがある、とのこと...
-	cmdstr := "sqlite3 data.db < activate.sql"
-	out, _ := exec.Command("sh", "-c", cmdstr).Output()
-	fmt.Printf("%s", out)
 }
 
 // org -f
@@ -495,44 +399,6 @@ func deleteAll() {
 	fmt.Printf("affected by delete: %d\n", affect)
 }
 
-//////////////////////////////////////////////////
-
-func create(body string) {
-
-	_, err := db.Exec(
-		`INSERT INTO memo (body) VALUES (?)`,
-		body,
-	)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func readAll() {
-	// 複数レコード取得
-	rows, err := db.Query(
-		`SELECT * FROM memo`,
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	// 処理が終わったらカーソルを閉じる
-	defer rows.Close()
-	for rows.Next() {
-		var id int
-		var body string
-		var created time.Time
-
-		// このscanの中、定義したカラム文すべて引数取らないとエラーになる、回避策あるだろ
-		if err := rows.Scan(&id, &body, &created); err != nil {
-			log.Fatal("rows.Scan()", err)
-			return
-		}
-		fmt.Printf("id: %d, title: %s, created: %v\n", id, body, created)
-	}
-}
-
 func readURL(key interface{}) string {
 	var row *sql.Row
 
@@ -655,36 +521,7 @@ func subRoutine(ids []int, inspector int) int {
 	return inspector
 }
 
-func ExampleCommandPipeLine() {
-	out, err := pipeline.Output(
-	//[]string{"git", "log", "--oneline"},
-	//[]string{"grep", "1st commit"},
-	//[]string{"wc", "-l"},
-
-	// これもいけた
-	//[]string{"ls", "-la"},
-	//[]string{"peco"},
-
-	// []string{"cd", "../../.."},
-	//[]string{"pwd"},
-
-	//[]string{"sqlite3", "data.db", "<", "activate.sql"},
-	//[]string{"select", "*", "from", "urls"},
-	)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(string(out))
-	// Output:
-	// 1
-}
-
 func main() {
 	//setup()
 	parse()
-	//db.Close()
-
-	// fmt.Println(getMinimumID())
-
 }
