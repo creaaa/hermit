@@ -72,6 +72,7 @@ func init() {
 	var err error
 	db, err = sql.Open("sqlite3", dbpath)
 	if err != nil {
+		fmt.Println("DB開けなかったわ")
 		panic(err)
 	}
 	// setup
