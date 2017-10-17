@@ -37,7 +37,7 @@ import (
 )
 
 var db *sql.DB
-var repoName = "creaaa/Bookmark"
+var repoName = "creaaa/Orgasm"
 
 func init() {
 
@@ -444,6 +444,34 @@ func readURL(key interface{}) string {
 	return url // 該当行がなかった場合は、""(空文字)が返る点に注意
 }
 
+func showHelp() {
+	helpMessage := `
+		# add URL (make sure enclose URL in double quote if it includes '?')
+		$ orgasm add <"URL"> <alias> [description]
+		\n
+		# open URL
+		$ orgasm open <ID or alias>... # can designate multiple values by spacing
+		\n
+		# shows list of URLs
+		$ orgasm list
+		\n
+		# fetch whether URL returns 404, then update database
+		$ orgasm fetch
+		\n
+		# delete URL
+		$ orgasm delete <ID or alias>... # can designate multiple values by spacing
+		\n
+		# delete only URL that is already 404 (need 'orgasm fetch' in advance)
+		$ orgasm delete -f
+		\n
+		# delete all URLs
+		$ orgasm deleteall
+	`
+
+	fmt.Println(helpMessage)
+
+}
+
 func parse() {
 
 	if !isEqualOrGreaterThanMinArgs(2) {
@@ -489,6 +517,8 @@ func parse() {
 	case "fetch", "-f", "--fetch":
 		//fmt.Println("fetch!!")
 		fetch()
+	case "help", "-h", "--help":
+		showHelp()
 	default:
 		fmt.Println("no such command. exit...")
 		os.Exit(1)
