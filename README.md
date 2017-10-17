@@ -5,13 +5,13 @@
 
 ### Caution
 
-Orgasm assumes that you set $GOPATH in `~/go` as the first path.
-If not, this doesn't work. This situation will be improved soon.
-Sorry for the inconvinence. thanks.
+Orgasm assumes that you set `$GOPATH` in `~/go` as the first path.
+If not, this does not work. This situation will be improved soon.
+Sorry for the inconvenience. thanks.
 
 ### install
 
-make sure you set $GOPATH in `~/go` as the first path in advance. 
+As I showed above, make sure you set `$GOPATH` in `~/go` as the first path in advance. 
 
 ```sh
 $ go get github.com/creaaa/orgasm
@@ -33,7 +33,7 @@ $ orgasm list
 $ orgasm fetch
 
 # delete URL
-$ orgasm delete <ID or alias>... # can designate multiple values by spacing
+$ orgasm delete <ID or alias>
 
 # delete only URL that is already 404 (need `orgasm fetch` in advance)
 $ orgasm delete -f
