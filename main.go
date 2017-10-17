@@ -40,15 +40,10 @@ var db *sql.DB
 
 func init() {
 
-	//db, err = sql.Open("sqlite3", "data.db")
-	//if err != nil {
-	//	panic(err)
-	//}
-
 	gopath := strings.Split(os.Getenv("GOPATH"), ":")[0]
-	fmt.Println("ゴーパス: ", gopath)
+	// fmt.Println("ゴーパス: ", gopath)
 
-	flag := false
+	var flag bool
 	// やっぱそうだ。ファイルの指定方法に 相対パス指定すると、
 	// ターミナルのカレントディレクトリを起点として探索する。
 	// dbpath := "./src/github.com/creaaa/Bookmark/data.db"
@@ -58,28 +53,19 @@ func init() {
 	dbpath := gopath + "/src/github.com/creaaa/Bookmark/data.db"
 
 	if !fileExists(dbpath) {
-		fmt.Println("ないから作るわ")
+		// fmt.Println("ないから作るわ")
 		flag = true
-		//move("src/github.com/creaaa/Bookmark")
-		//_, err := os.Create("data.db")
-		//if err != nil {
-		//	panic(err)
-		//}
-	} else {
-		fmt.Println("あったからなにもしないわ")
 	}
 	// open
 	var err error
 	db, err = sql.Open("sqlite3", dbpath)
 	if err != nil {
-		fmt.Println("DB開けなかったわ")
 		panic(err)
 	}
 	// setup
 	if flag {
 		setup()
 	}
-
 }
 
 func db_exec(db *sql.DB, q string) {
@@ -113,15 +99,14 @@ func argParse(args []string) []string {
 		}
 
 		if strings.HasPrefix(arg, "http") || strings.HasPrefix(arg, "https") {
-			fmt.Println("this is url!!")
+			//fmt.Println("this is url!!")
 			args = append(args, arg)
 		} else if i, err := strconv.Atoi(arg); err == nil {
 			// intがまざってたら、URLに変換する処理を書く
-			fmt.Println("int!!!")
+			//fmt.Println("int!!!")
 			// DBから、IDをキーにURLを取得
 			if url := readURL(i); url != "" {
 				args = append(args, url)
-				fmt.Println("おら", args)
 			}
 		} else {
 			fmt.Println("エイリアスの可能性!")
@@ -131,7 +116,7 @@ func argParse(args []string) []string {
 			}
 		}
 	}
-	fmt.Println("最終結果: ", args)
+	//fmt.Println("最終結果: ", args)
 	return args
 }
 
@@ -148,13 +133,11 @@ func openURL() {
 	}
 
 	urls = argParse(urls)
-	fmt.Println("ks", urls)
 	exec.Command("open", urls...).Run()
 }
 
 // org -a
 func add() {
-
 	args := os.Args
 
 	// URLバリデーション
@@ -181,16 +164,12 @@ func add() {
 	if err != nil {
 		panic(err)
 	}
-
 }
 
 // org -n
-func name() {
-}
-
+//func name() {}
 // org -e
-func explain() {
-}
+//func explain() {}
 
 // org -l
 func list() {
@@ -206,7 +185,7 @@ func list() {
 	paths := strings.Split(gopath, ":")
 	projectRoot := paths[0] + "/src/github.com/creaaa/Bookmark"
 
-	fmt.Println("プロジェクト直下: ", projectRoot)
+	//fmt.Println("プロジェクト直下: ", projectRoot)
 
 	// 2. ホームディレクトリに移動
 	move(homePath)
@@ -220,7 +199,7 @@ func list() {
 		}
 		makeRC()
 		// もとの場所に戻ってくる
-		move(projectRoot) // projectroot
+		move(projectRoot)
 		// 出力
 		pr()
 		// ルートの場所に戻ってくる
@@ -253,13 +232,13 @@ func list() {
 }
 
 func makeRC() {
-	// つくる
+	// 整形出力するべくすぐ死ぬ.rcファイルをつくる
 	f, err := os.OpenFile(".sqliterc", os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
-	// かきこむ
+	// write
 	f.WriteString(".header on\n.mode column\n")
 }
 
@@ -268,13 +247,14 @@ func fileExists(filename string) bool {
 	return err == nil
 }
 
-// 出力
+// pretty-print
 func pr() {
 	cmdstr := "sqlite3 data.db < activate.sql"
 	out, _ := exec.Command("sh", "-c", cmdstr).Output()
 	fmt.Printf("%s", out)
 }
 
+// change current directory
 func move(path string) {
 	err := os.Chdir(path)
 	if err != nil {
@@ -323,10 +303,10 @@ func isResourceExist(urls []string) int {
 
 	for _, url := range urls {
 		res, _ = http.Head(url)
-		fmt.Println("status code: ", res.StatusCode)
+		//fmt.Println("status code: ", res.StatusCode)
 		// もし404かつフラグが立ってないならば、flagをon
 		if res.StatusCode == 404 && getFlag(url) == 0 {
-			fmt.Println("404!!")
+			//fmt.Println("404!!")
 			updateFlag(url)
 			count += 1
 		}
@@ -362,20 +342,20 @@ func delete() {
 	)
 
 	if strings.HasPrefix(args[0], "http") || strings.HasPrefix(args[0], "https") {
-		fmt.Println("this is url!!")
+		//fmt.Println("this is url!!")
 		res, err = db.Exec(
 			`DELETE FROM urls WHERE url=?`,
 			args[0], // 1個しか消せないようにした
 		)
 	} else if _, err := strconv.Atoi(args[0]); err == nil {
 		// intがまざってたら、URLに変換する処理を書く
-		fmt.Println("int!!!")
+		//fmt.Println("int!!!")
 		res, err = db.Exec(
 			`DELETE FROM urls WHERE ID=?`,
 			args[0], // 1個しか消せないようにした
 		)
 	} else {
-		fmt.Println("エイリアスの可能性!")
+		//fmt.Println("エイリアスの可能性!")
 		// エイリアスならURLに変換する処理を書く
 		res, err = db.Exec(
 			`DELETE FROM urls WHERE alias=?`,
@@ -428,8 +408,6 @@ func deleteAll() {
 		if err != nil {
 			panic(err)
 		}
-	} else {
-		fmt.Println("did nothing...")
 	}
 
 	// 削除されたレコード数
@@ -448,7 +426,6 @@ func readURL(key interface{}) string {
 	case int:
 		row = db.QueryRow(`SELECT url FROM urls WHERE ID=?`, key)
 	case string:
-		fmt.Println("ここってことやな！", key)
 		// エイリアスが同じでも、QueryRowなら最初の1行だけ返すだけ!
 		row = db.QueryRow(`SELECT url FROM urls WHERE ALIAS=?`, key)
 	}
@@ -459,7 +436,7 @@ func readURL(key interface{}) string {
 	// エラー内容による分岐
 	switch {
 	case err == sql.ErrNoRows:
-		fmt.Println("Not found")
+		//fmt.Println("Not found")
 	case err != nil:
 		panic(err)
 	}
@@ -474,11 +451,11 @@ func parse() {
 	}
 
 	switch os.Args[1] {
-	case "-o":
-		fmt.Println("openURL!")
+	case "open", "-o", "--open":
+		//fmt.Println("openURL!")
 		openURL()
 	case "add", "-a", "--add":
-		fmt.Println("add!")
+		//fmt.Println("add!")
 		if isEqualOrGreaterThanMinArgs(4) {
 			add()
 		} else {
@@ -494,7 +471,7 @@ func parse() {
 		if isEqualOrGreaterThanMinArgs(3) {
 			// -f をつけると、flagがonのものだけ消す
 			if os.Args[2] == "-f" || os.Args[2] == "--flag" {
-				fmt.Println("delete only flag!")
+				//fmt.Println("delete only flag!")
 				deleteOnlyFlagOn()
 			} else {
 				delete()
@@ -503,13 +480,13 @@ func parse() {
 			panic("invalid argument: you need to add at least URL or alias or ID")
 		}
 	case "deleteall", "-da", "--deleteall":
-		fmt.Println("deleteAll!")
+		//fmt.Println("deleteAll!")
 		deleteAll()
 	case "list", "-l", "--list":
-		fmt.Println("list!")
+		//fmt.Println("list!")
 		list()
 	case "fetch", "-f", "--fetch":
-		fmt.Println("fetch!!")
+		//fmt.Println("fetch!!")
 		fetch()
 	default:
 		fmt.Println("no such command. exit...")
