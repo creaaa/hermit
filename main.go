@@ -204,7 +204,7 @@ func list() {
 
 	gopath := os.Getenv("GOPATH")
 	paths := strings.Split(gopath, ":")
-	projectRoot := paths[0] + "/src/github.com/creaaa/Bookmark/data.db"
+	projectRoot := paths[0] + "/src/github.com/creaaa/Bookmark"
 
 	fmt.Println("プロジェクト直下: ", projectRoot)
 
