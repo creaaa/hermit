@@ -37,6 +37,7 @@ import (
 )
 
 var db *sql.DB
+var repoName = "creaaa/Bookmark"
 
 func init() {
 
@@ -50,7 +51,7 @@ func init() {
 
 	//なので。。
 	move(gopath)
-	dbpath := gopath + "/src/github.com/creaaa/Bookmark/data.db"
+	dbpath := gopath + "/src/github.com/" + repoName + "/data.db"
 
 	if !fileExists(dbpath) {
 		// fmt.Println("ないから作るわ")
@@ -109,7 +110,7 @@ func argParse(args []string) []string {
 				args = append(args, url)
 			}
 		} else {
-			fmt.Println("エイリアスの可能性!")
+			// fmt.Println("エイリアスの可能性!")
 			// エイリアスならURLに変換する処理を書く
 			if url := readURL(arg); url != "" {
 				args = append(args, url)
@@ -183,7 +184,7 @@ func list() {
 
 	gopath := os.Getenv("GOPATH")
 	paths := strings.Split(gopath, ":")
-	projectRoot := paths[0] + "/src/github.com/creaaa/Bookmark"
+	projectRoot := paths[0] + "/src/github.com/" + repoName
 
 	//fmt.Println("プロジェクト直下: ", projectRoot)
 
