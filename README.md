@@ -1,18 +1,18 @@
 
-# Orgasm
+# hermit
 
 [![Platform](http://img.shields.io/badge/platform-macos-blue.svg?style=flat)](https://www.apple.com/macos/how-to-upgrade/)
 [![Language](http://img.shields.io/badge/language-go-brightgreen.svg?style=flat)](https://golang.org/)
 
-## Zen Mode Bookmark List That Drives Your Night
+## Orgasmic URL Clipper That Drives Your Night
 
 <div align="center">
-<img src="https://github.com/creaaa/orgasm/blob/master/image.png">
+<img src="https://github.com/creaaa/hermit/blob/master/image.png">
 </div>
 
 ### Caution
 
-Orgasm assumes that you set `$GOPATH` in `~/go` as the first path.
+Hermit assumes that you set `$GOPATH` in `~/go` as the first path.
 If not, this does not work. This situation will be improved soon.
 Sorry for the inconvenience. thanks.
 
@@ -28,25 +28,25 @@ $ go get github.com/creaaa/orgasm
 
 ```
 # add URL (make sure enclose URL in double quote if it includes `?`)
-$ orgasm add <"URL"> <alias> [description]
+$ hermit add <"URL"> <alias> [description]
 
 # open URL
-$ orgasm open <ID or alias>... # can designate multiple values by spacing
+$ hermit open <ID or alias>... # can designate multiple values by spacing
 
 # shows list of URLs
-$ orgasm list
+$ hermit list
 
 # fetch whether URL returns 404, then update database
-$ orgasm fetch
+$ hermit fetch
 
 # delete URL
-$ orgasm delete <ID or alias>
+$ hermit delete <ID or alias>
 
 # delete only URL that is already 404 (need `orgasm fetch` in advance)
-$ orgasm delete -f
+$ hermit delete -f
 
 # delete all URLs
-$ orgasm deleteall
+$ hermit deleteall
 ```
 
 ### Environment
