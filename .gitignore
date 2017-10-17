@@ -2,3 +2,4 @@
 /src/github.com/mattn
 /.idea
 data.db
+/.envrc

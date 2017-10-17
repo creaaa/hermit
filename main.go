@@ -33,8 +33,6 @@ import (
 	"strconv"
 	"strings"
 
-	"path/filepath"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -169,10 +167,14 @@ func list() {
 	homePath := os.Getenv("HOME")
 
 	// これ、ファイルの位置ではなく、ターミナルのカレントディレクトリに依存する。だめじゃん
-	projectRoot, _ := filepath.Abs(".")
-	fmt.Println(projectRoot)
+	//projectRoot, _ := filepath.Abs(".")
+	//fmt.Println(projectRoot)
 
-	os.Exit(87)
+	gopath := os.Getenv("GOPATH")
+	paths := strings.Split(gopath, ":")
+	projectRoot := paths[0] + "/src/github.com/creaaa/Bookmark/data.db"
+
+	fmt.Println("プロジェクト直下: ", projectRoot)
 
 	// 2. ホームディレクトリに移動
 	move(homePath)
