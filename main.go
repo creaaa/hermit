@@ -45,9 +45,31 @@ func init() {
 	//	panic(err)
 	//}
 
-	if !fileExists("") {
+	flag := false
+	dbpath := "./src/github.com/creaaa/Bookmark/data.db"
+
+	if !fileExists(dbpath) {
+		fmt.Println("ないから作るわ")
+		flag = true
+		//move("src/github.com/creaaa/Bookmark")
+		//_, err := os.Create("data.db")
+		//if err != nil {
+		//	panic(err)
+		//}
+	} else {
+		fmt.Println("あったからなにもしないわ")
 	}
-	//setup()
+	// open
+	var err error
+	db, err = sql.Open("sqlite3", dbpath)
+	if err != nil {
+		panic(err)
+	}
+	// setup
+	if flag {
+		setup()
+	}
+
 }
 
 func db_exec(db *sql.DB, q string) {
