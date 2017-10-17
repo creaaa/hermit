@@ -530,6 +530,5 @@ func subRoutine(ids []int, inspector int) int {
 }
 
 func main() {
-	//parse()
-
+	parse()
 }
