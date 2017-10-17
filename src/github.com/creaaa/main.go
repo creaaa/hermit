@@ -33,6 +33,8 @@ import (
 	"strconv"
 	"strings"
 
+	"path/filepath"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -165,7 +167,12 @@ func list() {
 
 	// 1. プロジェクト直下のパスを保存しておく
 	homePath := os.Getenv("HOME")
-	projectRoot, _ := os.Getwd()
+
+	// これ、ファイルの位置ではなく、ターミナルのカレントディレクトリに依存する。だめじゃん
+	projectRoot, _ := filepath.Abs(".")
+	fmt.Println(projectRoot)
+
+	os.Exit(87)
 
 	// 2. ホームディレクトリに移動
 	move(homePath)
@@ -523,9 +530,6 @@ func subRoutine(ids []int, inspector int) int {
 }
 
 func main() {
-	// parse()
-
-	gopath := os.Getenv("GOPATH")
-	fmt.Println(gopath)
+	//parse()
 
 }
