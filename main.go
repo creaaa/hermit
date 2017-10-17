@@ -37,7 +37,7 @@ import (
 )
 
 var db *sql.DB
-var repoName = "creaaa/Orgasm"
+var repoName = "creaaa/orgasm"
 
 func init() {
 
