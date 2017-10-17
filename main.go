@@ -45,8 +45,17 @@ func init() {
 	//	panic(err)
 	//}
 
+	gopath := strings.Split(os.Getenv("GOPATH"), ":")[0]
+	fmt.Println("ゴーパス: ", gopath)
+
 	flag := false
-	dbpath := "./src/github.com/creaaa/Bookmark/data.db"
+	// やっぱそうだ。ファイルの指定方法に 相対パス指定すると、
+	// ターミナルのカレントディレクトリを起点として探索する。
+	// dbpath := "./src/github.com/creaaa/Bookmark/data.db"
+
+	//なので。。
+	move(gopath)
+	dbpath := gopath + "/src/github.com/creaaa/Bookmark/data.db"
 
 	if !fileExists(dbpath) {
 		fmt.Println("ないから作るわ")
