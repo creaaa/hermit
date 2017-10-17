@@ -1,6 +1,9 @@
 
 # Orgasm
 
+[![Platform](http://img.shields.io/badge/platform-macos-blue.svg?style=flat)](https://www.apple.com/macos/how-to-upgrade/)
+[![Language](http://img.shields.io/badge/language-go-brightgreen.svg?style=flat)](https://golang.org/)
+
 ## Zen Mode Bookmark List That Drives Your Night
 
 ### Caution
