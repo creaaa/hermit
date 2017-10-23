@@ -42,7 +42,7 @@ $ hermit fetch
 # delete URL
 $ hermit delete <ID or alias>
 
-# delete only URL that is already 404 (need `hermit fetch` in advance)
+# delete only URL that is already 404 (need `hermit fetch` in advance to set up a flag)
 $ hermit delete -f
 
 # delete all URLs
