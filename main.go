@@ -2,7 +2,7 @@
 DBは常にオープンしてないと、だめだ！！ランタイムエラーになる！
 
 くそばまりポイント発見！
-db, err = sql.Open("sqlite3", "./unko.db")
+db, err = sql.Open("sqlite3", "./date.db")
 
 これ、通った「時点」でファイル作られると思うが違う！
 実際は、テーブル定義を db.Exec(q) しないと作られない！
@@ -42,7 +42,6 @@ var repoName = "creaaa/hermit"
 func init() {
 
 	gopath := strings.Split(os.Getenv("GOPATH"), ":")[0]
-	// fmt.Println("ゴーパス: ", gopath)
 
 	var flag bool
 	// やっぱそうだ。ファイルの指定方法に 相対パス指定すると、
@@ -448,22 +447,22 @@ func showHelp() {
 	helpMessage := `
 		# add URL (make sure enclose URL in double quote if it includes '?')
 		$ hermit add <"URL"> <alias> [description]
-		\n
+		
 		# open URL
 		$ hermit open <ID or alias>... # can designate multiple values by spacing
-		\n
+		
 		# shows list of URLs
 		$ hermit list
-		\n
+		
 		# fetch whether URL returns 404, then update database
 		$ hermit fetch
-		\n
+		
 		# delete URL
 		$ hermit delete <ID or alias>... # can designate multiple values by spacing
-		\n
+		
 		# delete only URL that is already 404 (need 'hermit fetch' in advance)
 		$ hermit delete -f
-		\n
+		
 		# delete all URLs
 		$ hermit deleteall
 	`
@@ -566,7 +565,6 @@ func subRoutine(ids []int, inspector int) int {
 			//fmt.Println("違った")
 		}
 	}
-	// ないので終了
 	//fmt.Println("ないので終了")
 	return inspector
 }
