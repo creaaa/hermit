@@ -56,16 +56,19 @@ func init() {
 		// fmt.Println("ないから作るわ")
 		flag = true
 	}
+
+	// setup
+	if flag {
+		setup()
+	}
+	
 	// open
 	var err error
 	db, err = sql.Open("sqlite3", dbpath)
 	if err != nil {
 		panic(err)
 	}
-	// setup
-	if flag {
-		setup()
-	}
+	
 }
 
 func db_exec(db *sql.DB, q string) {
