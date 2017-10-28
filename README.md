@@ -14,7 +14,7 @@
 
 Hermit assumes that you set `$GOPATH` in `~/go` as the first path.
 If not, this does not work. This situation will be improved soon.
-Sorry for the inconvenience. thanks.
+Sorry for the inconvenience.
 
 ### Install
 

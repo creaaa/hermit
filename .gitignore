@@ -3,3 +3,6 @@
 /.idea
 data.db
 /.envrc
+.DS_Store
+hermit
+src/
