@@ -3,6 +3,5 @@
 /.idea
 data.db
 /.envrc
-.DS_Store
+.gitignore
 hermit
-src/
